@@ -1,6 +1,9 @@
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Ls {
     public static void main(String[] args) {
@@ -13,20 +16,52 @@ public class Ls {
         File directory = new File(args[args.length - 1]);
         boolean dir = directory.isDirectory();
 
-        for (String arg : args) { // Переопределение флагов
-            if (arg.equals("-l")) l = true;
-            if (arg.equals("-h")) h = true;
-            if (arg.equals("-r")) r = true;
-            if (arg.equals("-o")) {
+        for (int i = 0; i < args.length; i++) {
+
+            if (args[i].equals("-l")) l = true;
+            if (args[i].equals("-h")) h = true;
+            if (args[i].equals("-r")) r = true;
+            if (args[i].equals("-o")) {
                 o = true;
-                String outPutFile = args[args.length - 2];
+                int position = i;
             }
         }
+
+        if (o) {
+            String outPutFile = args[args.length - 2];
+            if (!outPutFile.equals("-o")) {
+                try (BufferedWriter result = new BufferedWriter(new FileWriter(
+                        "C:\\Users\\Елена\\IdeaProjects\\javaPolitech2\\textFile\\" + outPutFile
+                                + ".txt"))) {
+                    ArrayList<String> text = getInfo(directory, l, h, dir, r);
+                    result.write(makeString(text));
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            } else {
+                throw new IllegalArgumentException("Wrong input");
+            }
+            } else {
+                ArrayList<String> kek = getInfo(directory, l, h, dir, r);
+                System.out.println(kek);
+            }
     }
 
-    private String getAccess(File file, boolean h) {
+    private static ArrayList getFile(File file, boolean dir) {
+        ArrayList<File> lisOfFiles = new ArrayList<>();
+        if (dir) {
+            for (File subFile : file.listFiles()) {
+                lisOfFiles.add(subFile);
+            }
+        } else {
+            lisOfFiles.add(file);
+        }
+        return lisOfFiles;
+    }
+
+    private static String getAccess(File file, boolean h) {
         String access = "";
-        if (h) {
+        if (!h) {
             if (file.canRead()) {
                 access += 1;
             } else {
@@ -42,8 +77,7 @@ public class Ls {
             } else {
                 access += 0;
             }
-        }
-        else {
+        } else {
             if (file.canRead()) {
                 access += 'r';
             } else {
@@ -63,13 +97,14 @@ public class Ls {
         return access;
     }
 
-    private String getTime(File file) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss ");
-        return sdf.format(file.lastModified());
+    private static String getTime(File file) {
+        SimpleDateFormat time = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss ");
+        return time.format(file.lastModified());
     }
-    private String getLength(File file, boolean h) {
+
+    private static String getLength(File file, boolean h) {
         String result = "";
-        if (h) {
+        if (!h) {
             result += file.length() + "B ";
         } else {
             if (file.length() < 1024) {
@@ -88,24 +123,47 @@ public class Ls {
         return result;
     }
 
-    private String getInfo(File file, boolean h, boolean d, boolean r) {
-         String result = "";
-            if (d) {
-                result += file.getName() + " directory";
+    private static ArrayList<String> getInfo(File file, boolean l, boolean h, boolean dir, boolean r) {
+        String result;
+        ArrayList<File> listOfFiles = getFile(file, dir);
+        ArrayList<String> end = new ArrayList<>();
+        if (l) {
+            for (File subFile : listOfFiles) {
+                if (subFile.isDirectory()) {
+                    result =(subFile.getName() + " directory" );
+                    end.add(result);
+                } else if (r) {
+                    result = (getLength(subFile, h) + " " + getTime(subFile) +
+                            " " + getAccess(subFile, h) + " " + subFile.getName()  +
+                            " file");
+                    end.add(result);
+                } else {
+                    result = (subFile.getName() + " file " + getAccess(subFile, h) + " " +
+                            getTime(subFile) + " " +
+                            getLength(subFile, h));
+                    end.add(result);
+                }
             }
-            else if (r) {
-                result += file.length() + getTime(file) + getAccess(file, h) + file.getName() + " file";
-            } else {
-                result += file.getName() + " file" + getAccess(file, h) + getTime(file) + file.length();
+        } else {
+            for (File subFile : listOfFiles) {
+                if (subFile.isDirectory()) {
+                    result =(subFile.getName() + " directory" );
+                    end.add(result);
+                } else {
+                    result = (subFile.getName() + " file" );
+                    end.add(result);
+                }
             }
+        }
+        return end;
+    }
+    private static String makeString(ArrayList<String> text) {
+        String result = "";
+        for (String subString : text) {
+            result += subString + "\r\n";
+        }
         return result;
     }
-
-    private static File putToFile(File file, String directory) {
-        File newFile = new File(directory, "newFile.txt");
-
-    }
-
 }
 
 
