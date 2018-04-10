@@ -24,7 +24,7 @@ public class Ls {
         }
     }
 
-    private String getAccsess(File file, boolean h) {
+    private String getAccess(File file, boolean h) {
         String access = "";
         if (h) {
             if (file.canRead()) {
@@ -94,11 +94,16 @@ public class Ls {
                 result += file.getName() + " directory";
             }
             else if (r) {
-                result += file.length() + getTime(file) + getAccsess(file, h) + file.getName() + " file";
+                result += file.length() + getTime(file) + getAccess(file, h) + file.getName() + " file";
             } else {
-                result += file.getName() + " file" + getAccsess(file, h) + getTime(file) + file.length();
+                result += file.getName() + " file" + getAccess(file, h) + getTime(file) + file.length();
             }
         return result;
+    }
+
+    private static File putToFile(File file, String directory) {
+        File newFile = new File(directory, "newFile.txt");
+
     }
 
 }
