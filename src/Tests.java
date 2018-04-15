@@ -13,7 +13,7 @@ public class Tests {
 
     @Test
     void testOutput() throws Exception {
-        String[] command = "-l -r -h -o newFile directoryWithFiles".split(" ");
+        String[] command = "-l -r -h -o newFile testDirectory".split(" ");
         Ls.main(command);
         String expectString = new String(Files.readAllBytes(Paths.get("expectedText/outputFile.txt")));
         String outputString = new String(Files.readAllBytes(Paths.get("newFile.txt")));
@@ -22,7 +22,7 @@ public class Tests {
 
     @Test
     void testLong() throws Exception {
-        String[] command = "-l -r -h directoryWithFiles".split(" ");
+        String[] command = "-l -r -h testDirectory".split(" ");
         PrintStream o = new PrintStream(new File("outputFile.txt"));
         System.setOut(o);
         Ls.main(command);
@@ -34,7 +34,7 @@ public class Tests {
 
     @Test
     void simpleTest() throws Exception {
-        String[] command = "directoryWithFiles".split(" ");
+        String[] command = "testDirectory".split(" ");
         PrintStream o = new PrintStream(new File("simpleOutputFile.txt"));
         System.setOut(o);
         Ls.main(command);
@@ -44,4 +44,3 @@ public class Tests {
         Assert.assertEquals(expectString, actualString);
     }
 }
-
