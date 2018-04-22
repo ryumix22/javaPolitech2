@@ -24,7 +24,7 @@ public class Tests {
     void testLong() throws Exception {
         String[] command = "-l -r -h testDirectory".split(" ");
         PrintStream o = new PrintStream(new File("outputFile.txt"));
-        System.setOut(o);
+        System.setOut(o); // я не знаю, как сделать тесты для консолльного вывода
         Ls.main(command);
         String actualString = new String(Files.readAllBytes(Paths.get("outputFile.txt")));
         String expectString = new String(Files.readAllBytes(Paths.get("expectedText/expectedString.txt")));
@@ -44,3 +44,4 @@ public class Tests {
         Assert.assertEquals(expectString, actualString);
     }
 }
+
