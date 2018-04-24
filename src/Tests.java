@@ -1,4 +1,4 @@
-import org.junit.Assert;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Tests {
@@ -17,7 +17,7 @@ public class Tests {
         Ls.main(command);
         String expectString = new String(Files.readAllBytes(Paths.get("expectedText/outputFile.txt")));
         String outputString = new String(Files.readAllBytes(Paths.get("newFile.txt")));
-        Assert.assertEquals(expectString, outputString);
+        assertEquals(expectString, outputString);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class Tests {
         String actualString = new String(Files.readAllBytes(Paths.get("outputFile.txt")));
         String expectString = new String(Files.readAllBytes(Paths.get("expectedText/expectedString.txt")));
 
-        Assert.assertEquals(expectString, actualString);
+        assertEquals(expectString, actualString);
     }
 
     @Test
@@ -41,7 +41,6 @@ public class Tests {
         String actualString = new String(Files.readAllBytes(Paths.get("simpleOutputFile.txt")));
         String expectString = new String(Files.readAllBytes(Paths.get("expectedText/expectedSimpleString.txt")));
 
-        Assert.assertEquals(expectString, actualString);
+        assertEquals(expectString, actualString);
     }
 }
-

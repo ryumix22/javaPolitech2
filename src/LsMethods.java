@@ -6,35 +6,35 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
- class LsMethods {
+class LsMethods {
 
     private Flag lFlag = new Flag(false );
     private Flag hFlag = new Flag(false);
     private Flag rFlag = new Flag(false);
     private Flag oFlag = new Flag("", false);
 
-    void mainFunction(String[] args) {
+    void getInfo(String[] args) {
         if (args.length > 6) throw new IllegalArgumentException("Wrong input");
+        if (args.length == 0) throw new IllegalArgumentException("No arguments");
 
         File directory = new File(args[args.length - 1]);
         boolean dir = directory.isDirectory();
 
         checkFlags(args);
-
         if (oFlag.bool) {
             String outPutFile = oFlag.directory;
             if (!outPutFile.equals("-o")) {
                 try (BufferedWriter result = new BufferedWriter(new FileWriter( outPutFile + ".txt"))) {
-                    ArrayList<String> text = getInfo(directory, lFlag.bool, hFlag.bool, dir, rFlag.bool);
+                    ArrayList<String> text = getFileInfo(directory, dir);
                     result.write(makeSting(text));
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                 }
             } else {
-                throw new IllegalArgumentException("Wrong input");
+                throw new IllegalArgumentException("Wrong input ");
             }
         } else {
-            ArrayList<String> result = getInfo(directory, lFlag.bool, hFlag.bool, dir, rFlag.bool);
+            ArrayList<String> result = getFileInfo(directory, dir);
             System.out.print(result);
         }
     }
@@ -64,9 +64,9 @@ import java.util.List;
         return lisOfFiles;
     }
 
-    private String getAccess(File file, boolean h) {
+    private String getAccess(File file) {
         String access = "";
-        if (!h) {
+        if (!hFlag.bool) {
             if (file.canRead()) {
                 access += 1;
             } else {
@@ -108,9 +108,9 @@ import java.util.List;
         return time.format(file.lastModified());
     }
 
-    private String getLength(File file, boolean h) {
+    private String getLength(File file) {
         String result = "";
-        if (!h) {
+        if (!hFlag.bool) {
             result += file.length() + "B ";
         } else {
             if (file.length() < 1024) {
@@ -129,24 +129,24 @@ import java.util.List;
         return result;
     }
 
-    private ArrayList<String> getInfo(File file, boolean l, boolean h, boolean dir, boolean r) {
+    private ArrayList<String> getFileInfo(File file, boolean dir) {
         String result;
         ArrayList<File> listOfFiles = getFile(file, dir);
         ArrayList<String> end = new ArrayList<>();
-        if (l) {
+        if (lFlag.bool) {
             for (File subFile : listOfFiles) {
                 if (subFile.isDirectory()) {
                     result =(subFile.getName() + " directory" );
                     end.add(result);
-                } else if (r) {
-                    result = (getLength(subFile, h) + " " + getTime(subFile) +
-                            " " + getAccess(subFile, h) + " " + subFile.getName()  +
+                } else if (rFlag.bool) {
+                    result = (getLength(subFile) + " " + getTime(subFile) +
+                            " " + getAccess(subFile) + " " + subFile.getName()  +
                             " file");
                     end.add(result);
                 } else {
-                    result = (subFile.getName() + " file " + getAccess(subFile, h) + " " +
+                    result = (subFile.getName() + " file " + getAccess(subFile) + " " +
                             getTime(subFile) + " " +
-                            getLength(subFile, h));
+                            getLength(subFile));
                     end.add(result);
                 }
             }
